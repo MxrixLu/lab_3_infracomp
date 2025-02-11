@@ -5,6 +5,7 @@ import java.util.HashMap;
 public class Fila {
     
     public static ArrayList<HashMap<String, Integer>> filaClientes = new ArrayList<HashMap<String, Integer>>();
+    private boolean terminado = false;
 
     public Fila() {
     }
@@ -17,6 +18,10 @@ public class Fila {
         }
     }
 
+    public synchronized void terminar() {
+        terminado = true;
+        notifyAll();
+    }
     
     public synchronized HashMap<String, Integer> atenderCliente(Integer uid){   
         if (filaClientes.isEmpty()){
@@ -31,20 +36,20 @@ public class Fila {
     }
 
 
-    public synchronized Integer retirarCliente(){
-        while(filaClientes.isEmpty()){
+    public synchronized HashMap<String, Integer> retirarCliente(){
+        while(filaClientes.isEmpty() && !terminado){
             try {
-                System.out.println("Entró al wait");
                 wait();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-
-        HashMap<String, Integer> cliente = filaClientes.getLast();
-        Integer uid = cliente.get("uid");   
-        filaClientes.remove(cliente);
-        return uid;
+        if (filaClientes.isEmpty() && terminado) {
+            return null;
+        }
+        HashMap<String, Integer> cliente = filaClientes.get(0);
+        filaClientes.remove(0);
+        return cliente;
         }
  }
         

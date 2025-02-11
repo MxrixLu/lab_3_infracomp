@@ -10,7 +10,7 @@ public class Clientes extends Thread {
     }
 
     public void run(){
-        for(int i= 0; i < numeroDeClientes; i++){
+        for(int i= 0; i <= numeroDeClientes; i++){
             System.out.println("Creando cliente " + i);
             Integer procesamientoBasico = new Random().nextInt(2000);
             
@@ -30,7 +30,13 @@ public class Clientes extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            if(i == numeroDeClientes){
+                System.out.println("Todos los clientes han sido creados");
+                App.fila.terminar();
+
+            }
         }
+        
     }
 
 }
